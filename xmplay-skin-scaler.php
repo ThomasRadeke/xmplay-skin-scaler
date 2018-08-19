@@ -15,7 +15,7 @@
   -f (optional): one of the following: point|box|triangle|hermite. (default: point)
   Please refer to the ImageMagick reference to learn more about the filter characteristics:
     http://www.imagemagick.org/Usage/filter/#interpolated
-  Example: php $self \"iXMPlay.xmpskin\" 2.0 box\n";
+  Example: php $self -i \"iXMPlay.xmpskin\" -s 2.0 -f triangle\n";
 	
 	// not enough arguments
 	if($argc == 1){
