@@ -26,11 +26,11 @@ To test if PHP works, just enter "php --version" in the terminal.
 
 ## Running
 Once everything is set up, the script can be run from the command prompt:
-```$ php xmplay-skin-scaler.php -i input -s scale [-f filter]
+```
+php xmplay-skin-scaler.php -i input -s scale [-f filter]
   -i: can be either an .xmpskin file or a directory with skin files.
   -s: any (float) number greater than 0.
   -f (optional): one of the following: point|box|triangle|hermite. (default: point)
   Please refer to the ImageMagick reference to learn more about the filter characteristics:
     http://www.imagemagick.org/Usage/filter/#interpolated
-  Example: php xmplay-skin-scaler.php "iXMPlay.xmpskin" 2.0 box```
-  
+  Example: php xmplay-skin-scaler.php "iXMPlay.xmpskin" 2.0 box
