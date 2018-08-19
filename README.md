@@ -1,4 +1,4 @@
-#XMPlay Skin Scaler
+# XMPlay Skin Scaler
 
 By Thomas Radeke, 2018
 
