@@ -14,6 +14,7 @@ The script is based on PHP and does all its conversions using ImageMagick. The s
 On Windows, you need to install:
 - PHP 7
 - ImageMagick
+
 Warning: getting the PHP imagick module working on Windows is quite complicated. I'm using XAMPP as my webdev system on Windows and had success following this guide:
 - [How to install and enable the Imagick extension in XAMPP for Windows](https://ourcodeworld.com/articles/read/349/how-to-install-and-enable-the-imagick-extension-in-xampp-for-windows) 
 
@@ -22,7 +23,8 @@ Setting up a suitable environment is much easier on Linux, just install the foll
 - php7.0-cli
 - php-imagick
 - php-zip (included with PHP7 on Windows)
-To test if PHP works, just enter "php --version" in the terminal.
+
+To test if PHP works, just enter `php --version` in the terminal.
 
 ## Running
 Once everything is set up, the script can be run from the command prompt:
