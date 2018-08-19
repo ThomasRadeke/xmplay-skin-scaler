@@ -35,4 +35,4 @@ php xmplay-skin-scaler.php -i input -s scale [-f filter]
   -f (optional): one of the following: point|box|triangle|hermite. (default: point)
   Please refer to the ImageMagick reference to learn more about the filter characteristics:
     http://www.imagemagick.org/Usage/filter/#interpolated
-  Example: php xmplay-skin-scaler.php "iXMPlay.xmpskin" 2.0 box
+  Example: php xmplay-skin-scaler.php -i "iXMPlay.xmpskin" -s 2.0 -f triangle
