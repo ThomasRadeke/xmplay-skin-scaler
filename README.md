@@ -27,6 +27,9 @@ Setting up a suitable environment is much easier on Linux, just install the foll
 To test if PHP works, just enter `php --version` in the terminal.
 
 ## Running
+
+### Command Line
+
 Once everything is set up, the script can be run from the command prompt:
 ```
 php xmplay-skin-scaler.php -i input -s scale [-f filter]
@@ -36,3 +39,9 @@ php xmplay-skin-scaler.php -i input -s scale [-f filter]
   Please refer to the ImageMagick reference to learn more about the filter characteristics:
     http://www.imagemagick.org/Usage/filter/#interpolated
   Example: php xmplay-skin-scaler.php -i "iXMPlay.xmpskin" -s 2.0 -f triangle
+
+### Web UI
+
+Version 0.3 includes a web interface that can be hosted on a suitable server with the neccessary PHP extensions installed. The actual interface is "xmplay-skin-scaler-web.php", but a redirect from "index.php" has been included for convenience.
+
+The web UI supports uploading multiple skins, selecting the scale factor and the image filter and converts all uploaded files automatically. The results of previous conversions are displayed as a downloadable list.
