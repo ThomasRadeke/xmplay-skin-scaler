@@ -39,6 +39,7 @@ php xmplay-skin-scaler.php -i input -s scale [-f filter]
   Please refer to the ImageMagick reference to learn more about the filter characteristics:
     http://www.imagemagick.org/Usage/filter/#interpolated
   Example: php xmplay-skin-scaler.php -i "iXMPlay.xmpskin" -s 2.0 -f triangle
+```
 
 ### Web UI
 
