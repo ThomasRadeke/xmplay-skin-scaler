@@ -4,11 +4,12 @@
 	XMPlay Skin Scaler by Thomas Radeke
 	This file provides all base functions for the skin conversion.
 	It must be included and used in other scripts, like the CLI version.
-	Required packages: php7.0 php-imagick
+	Required packages: php7.0, php-imagick (for php-imagick backend), imagemagick (for convert-cli backend)
 	On Linux, you might have to install php-zip, too.
 	*/
 	
-	$version = "0.3 (2018-09-01)";
+	$version = "0.4 (2018-09-06)";
+	$backend = "convert-cli";
 
 	// some functions ==========================================================================================
   
@@ -61,10 +62,12 @@
 	
 	function xmplay_skin_scaler($input_str, $scale_str, $filter_str = "point"){
 	
+		global $backend;
+	
 		$result = "";
 		
 		// init empty final values
-		$allowedfilters = array("point", "box", "triangle", "hermite");
+		$allowedfilters = array("point", "triangle", "hermite");
 		$inputs = array();
 		
 		if(is_string($input_str)){
@@ -291,83 +294,9 @@
 				
 				// convert images --------------------------------------------------------------------
 				$result .= status("Scaling and converting skin images using '$filter' filter...\n");
-				foreach($images as $image){
-					// read image
-					list($width, $height) = getimagesize($image);
-					$pathinfo = pathinfo($image);
-					$filename = $pathinfo["filename"];
-					$extension = $pathinfo["extension"];
-					
-					if(!preg_match("/^mask/i", $filename)){
-						$im = new Imagick();
-						$im->readImage($image);
-						$has_alpha = $im->getImageAlphaChannel();
-						
-						$im->setImageType(Imagick::IMGTYPE_TRUECOLOR);
-						$im->setImageDepth(32);
-						$im->setImageFormat("png32");
-						
-						// only process transparency if source image doesn't already have an alpha channel
-						if(!$has_alpha){
-							$im->setImageAlphaChannel(imagick::ALPHACHANNEL_OPAQUE);
-							// if we've found a "color_seethru" value while converting the config, use it here.
-							// otherwise, sample the color from the top-left pixel of the current image, but only for panels (old skins).
-							$color_transparency = "";
-							if(!empty($color_seethru)){
-								list($r, $g, $b) = sscanf($color_seethru, "%2s%2s%2s");
-								$r = hexdec($r);
-								$g = hexdec($g);
-								$b = hexdec($b);
-								$color_transparency = "$r,$g,$b";
-								$im->transparentPaintImage('rgb('.$color_transparency.')', 0, 0, false);
-							} else {
-								// only apply color_seethru to panels
-								if(preg_match("/^panel/i", $filename)){
-									$pixel = $im->getImagePixelColor(0, 0);
-									$tc = $pixel->getColor();
-									$r = $tc["r"];
-									$g = $tc["g"];
-									$b = $tc["b"];
-									$color_transparency = "$r,$g,$b";
-									$im->transparentPaintImage('rgb('.$color_transparency.')', 0, 0, false);
-								}
-							}
-						}
-						
-						$size = $im->getImageGeometry();
-						$w = ceil($size["width"]*$scale);
-						$h = ceil($size["height"]*$scale);
-						
-						// determine filter constant
-						
-						$blur = 1;
-						switch($filter){
-							case "point": $filterconstant = imagick::FILTER_POINT; break;
-							case "box": $filterconstant = imagick::FILTER_BOX; break;
-							case "triangle": $filterconstant = imagick::FILTER_TRIANGLE; break;
-							case "hermite": $filterconstant = imagick::FILTER_HERMITE; $blur = 1.2; break;
-						}
-						
-						// do the actual resize
-						$im->resizeImage($w, $h, $filterconstant, $blur);
-						
-						//$im->setImageCompressionQuality(90);
-						$im->writeImage("png32:".$newdir."/".$filename.".png");
-					} else {
-						$im = new Imagick();
-						$im->readImage($image);
-
-						$size = $im->getImageGeometry();
-						$w = ceil($size["width"]*$scale);
-						$h = ceil($size["height"]*$scale);
-						$im->sampleImage($w, $h); // resize without interpolation, preserve color map
-						
-						$im->setImageType(Imagick::IMGTYPE_PALETTE);
-						$im->setImageFormat("bmp");
-						$im->setCompression(imagick::COMPRESSION_NO);
-						$im->writeImage($newdir."/".basename($image));
-					}
-				}
+				
+				// include whichever backend was defined in xmplay-scaler-web.php
+				include("$backend.inc.php");
 				
 				//==============================================================================================
 				

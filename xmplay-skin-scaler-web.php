@@ -1,11 +1,12 @@
 <?php
 	/*
-	XMPlay Skin Scaler 0.3 (2018-09-01) by Thomas Radeke
+	XMPlay Skin Scaler 0.4 (2018-09-06) by Thomas Radeke
 	This script is supposed to be run on a web server and provides
 	a web form for uploading files to be converted.
-	Required packages: php7.0 php-imagick
+	Required packages: php7.0, php-imagick (for php-imagick backend), imagemagick (for convert-cli backend)
 	On Linux, you might have to install php-zip, too.
 	*/
+	error_reporting(E_ALL);
 
 	require_once("HTMLfromTemplate.class.php");
 	require_once("functions.inc.php");
@@ -37,8 +38,9 @@
 							// error making upload dir
 						}
 					}
-					// TODO: escape uploaded filenames
-					$destination = $upload_dir."/".$file["name"][$i];
+					// escape uploaded filenames
+					$filename = htmlspecialchars($file["name"][$i], ENT_QUOTES, 'UTF-8', false);
+					$destination = $upload_dir."/".$filename;
 					if(move_uploaded_file($file["tmp_name"][$i], $destination)){
 						$new_files[] = $destination;
 					} else {
@@ -63,7 +65,7 @@
 	
 	$files_links = array("Nothing has been uploaded yet.");
 	if(is_dir($upload_dir)){
-		$files = glob(glob_escape($upload_dir."/*[scaled*].xmpskin"));
+		$files = glob(glob_escape($upload_dir."/*.xmpskin"));
 		if(count($files) > 0){
 			usort($files, create_function('$a,$b', 'return filemtime($a) - filemtime($b);'));
 			$files = array_reverse($files);
