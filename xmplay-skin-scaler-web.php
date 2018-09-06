@@ -6,7 +6,6 @@
 	Required packages: php7.0, php-imagick (for php-imagick backend), imagemagick (for convert-cli backend)
 	On Linux, you might have to install php-zip, too.
 	*/
-	error_reporting(E_ALL);
 
 	require_once("HTMLfromTemplate.class.php");
 	require_once("functions.inc.php");

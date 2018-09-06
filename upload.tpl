@@ -14,7 +14,6 @@
 		</select><br>
 		<label for="filter" id="filter_label">
 			Use "point" if you want to scale a skin by whole numbers or don't want any smoothing.<br/>
-			"Box" only smooths while shrinking (scale &lt; 1.0)<br>
 			"Triangle" smooths both while shrinking and enlarging. It's a regular bilinear filter.<br>
 			"Hermite" is similar to "Triangle", but produces smoother gradients while enlarging.
 		</label>
