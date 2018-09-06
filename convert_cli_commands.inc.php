@@ -26,11 +26,14 @@
 	//-------------------------------------------------------------------------
 
 	// get the RGB color of an image at the top left corner
-	function im_getTopLeftPixelColor($image){
+	function im_getTopLeftPixelColor($image, $as_hex = true){
 		$result = false;
 		$command = 'convert "'.$image.'"[1x1+0+0] -format "%[fx:int(255*r)],%[fx:int(255*g)],%[fx:int(255*b)]" info:';
 		$return = exec($command);
 		$result = explode(",", $return);
+		if($as_hex){
+			$result = sprintf("%02X%02X%02X", $result[0], $result[1], $result[2]);
+		}
 		return $result;
 	}
 	
@@ -93,7 +96,7 @@
 			$alpha_str = "on";
 			$bits = "32";
 		}
-		$command = 'convert -alpha '.$alpha_str.' -define filter:filter='.$filter.' -define filter:blur='.$blur.' -resize '.$percent.'% "png'.$bits.':'.$infile.'" "'.$outfile.'"';
+		$command = 'convert -alpha '.$alpha_str.' -define filter:filter='.$filter.' -define filter:blur='.$blur.' -resize '.$percent.'% "'.$infile.'" "png'.$bits.':'.$outfile.'"';
 		exec($command);
 	}
 	
@@ -102,6 +105,7 @@
 	
 	// make a specific color transparent, then resize the image
 	function im_resize1BitAlphaImage($scale, $infile, $outfile, $transparency="00ff00", $filter="Triangle", $blur=1.5){
+		//print_r($transparency);
 		// interpret float scale as percentage
 		$percent = $scale*100;
 		$command = 'convert -alpha on -fill "rgba(0, 0, 0, 0)" -transparent "#'.$transparency.'" -define filter:filter='.$filter.' -define filter:blur='.$blur.' -resize '.$percent.'% "'.$infile.'" "png32:'.$outfile.'"';

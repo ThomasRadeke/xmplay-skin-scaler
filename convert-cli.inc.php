@@ -26,15 +26,28 @@
 				// deal with regular truecolor images
 				
 				// if "color_seethru" is defined in skinconfig.txt, use that for transparency
+				// for ALL skin images (except masks of course)
+				$with_alpha = true;
 				if($color_seethru){
 					$transparentcolor = $color_seethru;
 				} else {
-					// otherwise, get the top-left image color and use that as transparency
-					$transparentcolor = im_getTopLeftPixelColor($image);
+					// if "color_seethru" is NOT defined, pick the transparent color from
+					// the top-left pixel of "panel_" images only. All other images
+					// (except masks) just get resized normally, without alpha.
+					if(preg_match("/^panel/i", basename($image))){
+						// otherwise, get the top-left image color and use that as transparency
+						$transparentcolor = im_getTopLeftPixelColor($image);
+					} else {
+						$with_alpha = false;
+					}
 				}
 				
 				$target .= ".png";
-				im_resize1BitAlphaImage($scale, $image, $target, $transparentcolor, $filter, $blur);
+				if($with_alpha){
+					im_resize1BitAlphaImage($scale, $image, $target, $transparentcolor, $filter, $blur);
+				} else {
+					im_resizeImage($scale, $image, $target, false, $filter, $blur);
+				}
 				
 			} else {
 				// Resize 8-bit palette masks
