@@ -9,7 +9,6 @@
 	<div class="field">
 		<select id="filter" name="filter">
 			<option name="point" value="point" selected>Point (no filtering, default)</option>
-			<option name="box" value="box">Box (only smooths while shrinking)</option>
 			<option name="triangle" value="triangle">Triangle (regular bilinear filtering)</option>
 			<option name="hermite" value="hermite">Hermite (smoother gradients when enlarging)</option>
 		</select><br>
