@@ -1,6 +1,6 @@
 <?php
 	/*
-	XMPlay Skin Scaler 0.4 (2018-09-06) by Thomas Radeke
+	XMPlay Skin Scaler 0.4.1 (2018-09-07) by Thomas Radeke
 	This script is supposed to be run on a web server and provides
 	a web form for uploading files to be converted.
 	Required packages: php7.0, php-imagick (for php-imagick backend), imagemagick (for convert-cli backend)
@@ -21,6 +21,7 @@
 		// scale and filter are type-checked in the actual conversion routine
 		$scale = $_POST["scale"];
 		$filter = $_POST["filter"];
+		$blur = $_POST["blur"];
 	
 		// processing mode
 		$num_files = count($_FILES["upload"]["name"]);
@@ -38,7 +39,7 @@
 						}
 					}
 					// escape uploaded filenames
-					$filename = htmlspecialchars($file["name"][$i], ENT_QUOTES, 'UTF-8', false);
+					$filename = sanitizeFilename($file["name"][$i]);
 					$destination = $upload_dir."/".$filename;
 					if(move_uploaded_file($file["tmp_name"][$i], $destination)){
 						$new_files[] = $destination;
@@ -55,22 +56,41 @@
 		
 		// process all successfully uploaded files
 		if(!empty($new_files)){
-			$status = xmplay_skin_scaler($new_files, $scale, $filter);
+			$status = xmplay_skin_scaler($new_files, $scale, $filter, $blur);
 		} else {
 			// none of the files was successfully uploaded
+			$status = "None of the files were successfully uploaded, sorry!";
 		}
 		
 	}
 	
-	$files_links = array("Nothing has been uploaded yet.");
+	$files_links = array("(No files currently.)");
 	if(is_dir($upload_dir)){
+		
+		// clean up files and directories that are older than 24 hours
+		$cleanupfiles = glob(glob_escape($upload_dir."/*"));
+		if(count($cleanupfiles) > 0){
+			foreach($cleanupfiles as $cleanupfile){
+				$difference = time() - filemtime($cleanupfile);
+				if($difference > 86400){
+					//echo("cleaning up '$cleanupfile' (age: ".($difference/86400)." days)\n");
+					$recursive = "";
+					if(is_dir($cleanupfile)){
+						$recursive = " -R";
+					}
+					exec('rm'.$recursive.' "'.$cleanupfile.'"');
+				}
+			}
+		}
+		
 		$files = glob(glob_escape($upload_dir."/*.xmpskin"));
+		// list remaining files
 		if(count($files) > 0){
 			usort($files, create_function('$a,$b', 'return filemtime($a) - filemtime($b);'));
 			$files = array_reverse($files);
 			$files_links = array();
 			foreach($files as $file){
-				$files_links[] = '<a href="'.$file.'">'.basename($file).'</a>';
+				$files_links[] = '<a href="'.$file.'">'.basename($file).'</a> <span class="text">('.humanReadableByteCount(filesize($file)).', '.date("Y-m-d, H:i:s", filemtime($file)).')</span>';
 			}
 		}
 	}

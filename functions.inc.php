@@ -8,7 +8,7 @@
 	On Linux, you might have to install php-zip, too.
 	*/
 	
-	$version = "0.4 (2018-09-06)";
+	$version = "0.4.1 (2018-09-07)";
 	$backend = "convert-cli";
 
 	// some functions ==========================================================================================
@@ -58,13 +58,45 @@
 		return $string;
 	}
 	
+	//-----------------------------------------------------------------------------------------------------------------
+	
+	// remove any reserved or disruptive characters from filenames
+	// to prevent directory traversal or other filename-based attacks
+	function sanitizeFilename($str){
+		$str = ltrim($str, "./\\");
+		$str = preg_replace('/[\r\n\t]+/', '_', $str);
+		$str = preg_replace('/[\\\\\"\*\/\:\<\>\?\'\|]+/', '_', $str);
+		$str = htmlspecialchars($str, ENT_QUOTES, 'UTF-8', false);
+		return $str;
+	}
+	
+	//-----------------------------------------------------------------------------------------------------------------
+	
+	// make human-readable file sizes instead of just bytes
+	function humanReadableByteCount($bytes){
+		$result = "";
+		$unit = 1024;
+		if($bytes < $unit) {
+			$result = $bytes." B";
+		} else {
+			$exp = floor(log($bytes) / log($unit));
+			$pre = substr("KMGTPE", $exp-1, 1);
+			$result = sprintf("%.1f %sB", ($bytes / pow($unit, $exp)), $pre);
+		}
+		
+		return $result;
+		
+	}
+	
 	// conversion process ==========================================================================================
 	
-	function xmplay_skin_scaler($input_str, $scale_str, $filter_str = "point"){
+	function xmplay_skin_scaler($input_str, $scale_str, $filter_str = "point", $blur_str=1.5){
 	
 		global $backend;
 	
 		$result = "";
+		$filter = "point";
+		$blur = 1.5;
 		
 		// init empty final values
 		$allowedfilters = array("point", "triangle", "hermite");
@@ -122,6 +154,13 @@
 			$result .= status("Notice: unrecognized filter '$filter_str', defaulting to '$filter'.\n");
 		}
 		
+		// check blur
+		if(is_numeric($blur_str) && ($blur_str >= 0)){
+			$blur = $blur_str;
+		} else {
+			$result .= status("Notice: invalid blur value '$blur_str', defaulting to '$blur'.\n");
+		}
+		
 		// if all values have been checked, continue
 		if((count($inputs) > 0) && !empty($scale)){
 		
@@ -174,7 +213,11 @@
 				if(floatval($scale) === floatval(intval($scale))){
 					$scale = intval($scale);
 				}
-				$newdir = $target_dir." [scaled $scale, $filter]";
+				$blur_str = "";
+				if($filter !== "point"){
+					$blur_str = "@".$blur."px";
+				}
+				$newdir = $target_dir." [scaled $scale, {$filter}{$blur_str}]";
 				if(!is_dir($newdir)){
 					$result .= status("Creating target directory '$newdir'...\n");
 					mkdir($newdir);
@@ -293,7 +336,11 @@
 				fclose($handle);
 				
 				// convert images --------------------------------------------------------------------
-				$result .= status("Scaling and converting skin images using '$filter' filter...\n");
+				$blur_str = "";
+				if($filter !== "point"){
+					$blur_str = " with $blur pixels blurring";
+				}
+				$result .= status("Scaling and converting skin images using '$filter' filter{$blur_str}...\n");
 				
 				// include whichever backend was defined in xmplay-scaler-web.php
 				include("$backend.inc.php");

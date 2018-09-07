@@ -9,9 +9,6 @@
 
 	include("convert_cli_commands.inc.php");
 	
-	// TODO: make blur configurable
-	$blur = 1.5;
-	
 	// go through all images and decide what to do individually
 	foreach($images as $image){
 		$imgprops = test($image);

@@ -20,7 +20,7 @@
 		</div>
 		<div class="section download">
 			<h2>Download</h2>
-			<p>Showing newest files first.</p>
+			<p>Showing newest files first. Files will be deleted after 24 hours.</p>
 			{files_links}
 		</div>
 		<div id="footer">

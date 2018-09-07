@@ -11,9 +11,12 @@
 			<option name="point" value="point" selected>Point (no filtering, default)</option>
 			<option name="triangle" value="triangle">Triangle (regular bilinear filtering)</option>
 			<option name="hermite" value="hermite">Hermite (smoother gradients when enlarging)</option>
-		</select><br>
+		</select>
+		<span class="text">with</span>
+		<input type="number" id="blur" name="blur" value="1.5" min="0" max="10" step="0.1" />
+		<label for="blur">pixels filter blurring (not for Point)</label><br>
 		<label for="filter" id="filter_label">
-			Use "point" if you want to scale a skin by whole numbers or don't want any smoothing.<br/>
+			Use "Point" if you want to scale a skin by whole numbers or don't want any smoothing.<br/>
 			"Triangle" smooths both while shrinking and enlarging. It's a regular bilinear filter.<br>
 			"Hermite" is similar to "Triangle", but produces smoother gradients while enlarging.
 		</label>

@@ -31,7 +31,7 @@ body {
     margin-bottom: 2em;    
 }
 
-.section .uploadform label {
+.section .uploadform label, .text {
     font-style: italic;
     font-size: 80%;
 }
@@ -65,14 +65,10 @@ body {
     border-radius: 0.5em;
 }
 
-#upload_label {
-    
-}
-
-#scale {
+#scale, #blur {
     padding: 0.2em;
     font-size: 100%;
-    width: 3em;
+    width: 4em;
 }
 
 #scale_label {
